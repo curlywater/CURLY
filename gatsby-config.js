@@ -1,29 +1,23 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Starter Blog`,
+    title: `CURLY`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Curly Water`,
+      summary: `Code & Music & Life`,
     },
-    description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsby-starter-blog-demo.netlify.app/`,
+    description: `The Personal Site By Curly Water.`,
+    siteUrl: `https://https://curlywater.netlify.app/`,
     social: {
-      twitter: `kylemathews`,
+      twitter: `@Curly_Water`,
     },
+    lang: "zh-Hans",
   },
   plugins: [
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/content/blog`,
-        name: `blog`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: `${__dirname}/content/assets`,
-        name: `assets`,
+        path: `${__dirname}/content`,
+        name: `content`,
       },
     },
     {
@@ -60,13 +54,14 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Gatsby Starter Blog`,
-        short_name: `GatsbyJS`,
+        name: `CURLY`,
+        short_name: `CURLY`,
         start_url: `/`,
         background_color: `#ffffff`,
-        theme_color: `#663399`,
+        theme_color: `#73BB94`,
         display: `minimal-ui`,
-        icon: `content/assets/gatsby-icon.png`,
+        icon: `src/images/favicon.png`,
+        theme_color_in_head: false,
       },
     },
     `gatsby-plugin-react-helmet`,
