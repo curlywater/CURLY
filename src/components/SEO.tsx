@@ -42,6 +42,9 @@ const SEO: React.FC<ComponentProps> = ({ description, lang, meta, title }) => {
       htmlAttributes={{
         lang: lang || siteMetadata.lang,
       }}
+      bodyAttributes={{
+        class: "light",
+      }}
       {...(title
         ? {
             titleTemplate: `%s | ${siteMetadata.title}`,

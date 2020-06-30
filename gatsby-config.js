@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix: "/",
   siteMetadata: {
     title: `CURLY`,
     author: {
@@ -11,8 +12,19 @@ module.exports = {
       twitter: `@Curly_Water`,
     },
     lang: "zh-Hans",
+    entry: [
+      {
+        directory: "Blog",
+        type: "Articles",
+      },
+      {
+        directory: "Work",
+        type: "Gallery",
+      },
+    ],
   },
   plugins: [
+    "gatsby-plugin-styled-components",
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -23,6 +35,7 @@ module.exports = {
     {
       resolve: `gatsby-transformer-remark`,
       options: {
+        excerpt_separator: `<!-- end -->`,
         plugins: [
           {
             resolve: `gatsby-remark-images`,
@@ -39,6 +52,13 @@ module.exports = {
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
+          `gatsby-remark-katex`,
+          {
+            resolve: "gatsby-remark-external-links",
+            options: {
+              target: "_blank",
+            },
+          },
         ],
       },
     },
@@ -69,6 +89,7 @@ module.exports = {
       resolve: `gatsby-plugin-typography`,
       options: {
         pathToConfigModule: `src/utils/typography`,
+        omitGoogleFont: true,
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

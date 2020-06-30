@@ -1,7 +1,8 @@
 import React, { ReactElement } from "react"
 import { Link, useStaticQuery, graphql } from "gatsby"
+import styled from "styled-components"
 
-import { rhythm } from "../utils/typography"
+import { options, rhythm, adjustFontSizeTo } from "../utils/typography"
 
 type ComponentProps = {
   title?: string
@@ -9,72 +10,71 @@ type ComponentProps = {
   locationPath: string
 }
 
-const Layout: React.FC<ComponentProps> = ({
-  locationPath,
-  title,
-  children,
-}) => {
-  const dirName = locationPath.match(
-    new RegExp(`${__PATH_PREFIX__}(?:$|/([^/]+))`)
-  )?.[1]
-  let header: ReactElement = null
+const StyledLayout = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  max-width: ${rhythm(30)};
+  width: 80%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  & > main {
+    flex: 1;
+  }
+`
+const StyledHeaderLogo = styled.h1`
+  letter-spacing: 0.1em;
+  ${adjustFontSizeTo("42px")};
+  margin-top: ${rhythm(1)};
+  & > a {
+    text-decoration: none;
+    color: var(--title-primary);
+    &: hover {
+      opacity: 1;
+    }
+  }
+`
 
+const StyledFooter = styled.footer`
+  font-family: ${options.headerFontFamily.join(",")};
+  ${adjustFontSizeTo("10px")};
+  margin-top: ${rhythm(1)};
+  margin-bottom: ${rhythm(0.5)};
+  text-align: center;
+`
+
+const Layout: React.FC<ComponentProps> = ({ locationPath, children }) => {
   const data = useStaticQuery(graphql`
     query {
       site {
         siteMetadata {
+          title
           description
         }
+        pathPrefix
       }
     }
   `)
 
+  const dirName = locationPath.match(
+    new RegExp(`${data.site.pathPrefix}(?:$|/([^/]+))`)
+  )?.[1]
+  let header: ReactElement = null
+
   if (dirName === "blog") {
     header = (
-      <h1>
-        <Link
-          style={{
-            boxShadow: `none`,
-            color: `inherit`,
-          }}
-          to={`/`}
-        >
-          {title}
-        </Link>
-      </h1>
+      <StyledHeaderLogo>
+        <Link to={`/`}>{data.site.siteMetadata.title}</Link>
+      </StyledHeaderLogo>
     )
   }
 
   return (
-    <div
-      style={{
-        marginLeft: `auto`,
-        marginRight: `auto`,
-        maxWidth: rhythm(30),
-        padding: `${rhythm(3 / 4)}`,
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <StyledLayout>
       <header>{header}</header>
-      <main
-        style={{
-          flex: 1,
-        }}
-      >
-        {children}
-      </main>
-      <footer
-        className="footnote"
-        style={{
-          fontSize: "10px",
-          textAlign: "center",
-        }}
-      >
-        {data.site.siteMetadata.description}
-      </footer>
-    </div>
+      <main>{children}</main>
+      <StyledFooter>{data.site.siteMetadata.description}</StyledFooter>
+    </StyledLayout>
   )
 }
 
