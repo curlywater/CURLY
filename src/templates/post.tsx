@@ -1,15 +1,44 @@
 import React from "react"
-import { graphql } from "gatsby"
+import { Link, PageProps, graphql } from "gatsby"
 import styled from "styled-components"
 
 import Layout from "../components/Layout"
 import SEO from "../components/SEO"
 import { rhythm, scale, adjustFontSizeTo } from "../utils/typography"
 
+type DataProps = {
+  markdownRemark: {
+    id: string
+    html: string
+    fields: {
+      date: string
+      slug: string
+      category: string
+      subcategory: string | null
+    }
+    excerpt: string
+    timeToRead: number
+    tableOfContents: string
+  }
+}
+type PageContextProps = {
+  title: string
+  slug: string
+  relatedPosts: [
+    {
+      id: string
+      slug: string
+      title: string
+    }
+  ]
+}
+
 const StyledTOC = styled.aside`
-  flex: 0 0 auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(100%);
   padding: ${rhythm(1)} 0;
-  padding-left: ${rhythm(1)};
   section {
     position: relative;
     overflow-x: hidden;
@@ -41,27 +70,38 @@ const StyledTOC = styled.aside`
   }
 `
 
-const StyledArticle = styled.article`
-  flex: 1 1 auto;
-  user-select: "text";
+const StyledArticleHeader = styled.header`
+  text-align: center;
+  margin-top: ${rhythm(2)};
+  margin-bottom: ${rhythm(2)};
 `
 
-const BlogPostTemplate = ({ data, location }) => {
+const StyledArticleFooter = styled.footer`
+  margin-top: ${rhythm(1)};
+  margin-bottom: ${rhythm(1)};
+`
+
+const StyledRelatedPosts = styled.ul`
+  list-style: none;
+  margin-left: 0;
+`
+
+const BlogPostTemplate: React.FC<PageProps<DataProps, PageContextProps>> = ({
+  data,
+  location,
+  pageContext,
+}) => {
   const post = data.markdownRemark
-  const title = post.headings[0]?.value || post.fields.title
 
   return (
-    <Layout locationPath={location.pathname} mainStyle={{ display: "flex" }}>
-      <SEO title={title} description={post.excerpt} />
-      <StyledArticle>
-        <header style={{ textAlign: "center" }}>
-          <h1
-            style={{
-              marginTop: rhythm(2),
-            }}
-          >
-            {title}
-          </h1>
+    <Layout
+      locationPath={location.pathname}
+      mainStyle={{ position: "relative" }}
+    >
+      <SEO title={pageContext.title} description={post.excerpt} />
+      <article>
+        <StyledArticleHeader>
+          <h1>{pageContext.title}</h1>
           <p
             style={{
               ...scale(-1 / 5),
@@ -73,15 +113,25 @@ const BlogPostTemplate = ({ data, location }) => {
             {post.fields.date} • {post.timeToRead} min read
           </p>
           <hr />
-        </header>
+        </StyledArticleHeader>
         <section
           dangerouslySetInnerHTML={{
             __html: post.html.replace(/(.*<\/h1>)/, ""),
           }}
         />
-        <hr />
-        <footer></footer>
-      </StyledArticle>
+        <StyledArticleFooter>
+          <hr />
+          <h3>Related Post</h3>
+          <StyledRelatedPosts>
+            {pageContext.relatedPosts?.map(({ id, title, slug }) => (
+              <li key={id}>
+                <Link to={slug}>{title}</Link>
+              </li>
+            ))}
+            {renderRelatedCategory(post.fields)}
+          </StyledRelatedPosts>
+        </StyledArticleFooter>
+      </article>
       <StyledTOC>
         <section
           dangerouslySetInnerHTML={{
@@ -91,6 +141,22 @@ const BlogPostTemplate = ({ data, location }) => {
       </StyledTOC>
     </Layout>
   )
+}
+
+function renderRelatedCategory({ category, subcategory }) {
+  if (subcategory) {
+    return (
+      <li>
+        <Link to={`/${category}/${subcategory}`}>
+          → 更多
+          {subcategory[0].toUpperCase() + subcategory.slice(1)}
+          相关文章
+        </Link>
+      </li>
+    )
+  } else {
+    return null
+  }
 }
 
 export default BlogPostTemplate
@@ -103,10 +169,8 @@ export const pageQuery = graphql`
       fields {
         date(formatString: "MMMM DD, YYYY")
         slug
-        title
-      }
-      headings(depth: h1) {
-        value
+        category
+        subcategory
       }
       excerpt(pruneLength: 100)
       timeToRead

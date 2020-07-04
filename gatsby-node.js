@@ -48,15 +48,14 @@ exports.createPages = async ({ graphql, actions }) => {
       const category = entry.directory.toLowerCase()
       const fsEntry = fsEntriesMap.get(category)
       if (fsEntry) {
-        return entries.concat([
-          {
-            id: fsEntry.id,
-            name: entry.title || fsEntry.name,
-            type: entry.type || "Articles",
-            relativePath: `/${category}`,
-            category,
-          },
-        ])
+        entries.push({
+          id: fsEntry.id,
+          name: entry.title || fsEntry.name,
+          type: entry.type || "Articles",
+          relativePath: `/${category}`,
+          category,
+        })
+        return entries
       } else {
         return entries
       }
@@ -99,11 +98,20 @@ exports.createPages = async ({ graphql, actions }) => {
         {
           allMarkdownRemark(
             filter: { fields: { category: {eq: "${category}"} }}
+            sort: { fields: fields___date, order: DESC }
           ) {
             edges {
               node {
+                id
                 fields {
                   slug
+                  title
+                }
+                headings(depth: h1) {
+                  value
+                }
+                frontmatter {
+                  tags
                 }
               }
             }
@@ -132,14 +140,50 @@ exports.createPages = async ({ graphql, actions }) => {
 
       // Create blog posts pages.
       const posts = result.data.allMarkdownRemark.edges
-      posts.forEach(({ node: { fields: { slug } } }) =>
-        createPage({
-          path: slug,
-          component: path.resolve("./src/templates/post.tsx"),
-          context: {
-            slug,
+      posts.forEach(
+        ({
+          node: {
+            id,
+            fields: { slug, title },
+            frontmatter: { tags },
+            headings,
           },
-        })
+        }) => {
+          const postId = id
+          const postTitle =
+            (headings && headings[0] && headings[0].value) || title
+          const tagSet = new Set(tags)
+          const relatedPosts = posts
+            .filter(
+              ({
+                node: {
+                  id,
+                  frontmatter: { tags },
+                },
+              }) => {
+                if (postId === id) return false
+                for (const tag of tags || []) {
+                  if (tagSet.has(tag)) return true
+                }
+                return false
+              }
+            )
+            .slice(0, 5)
+            .map(({ node: { id, fields: { slug, title } }, headings }) => ({
+              id,
+              title: (headings && headings[0] && headings[0].value) || title,
+              slug,
+            }))
+          createPage({
+            path: slug,
+            component: path.resolve("./src/templates/post.tsx"),
+            context: {
+              title: postTitle,
+              slug,
+              relatedPosts,
+            },
+          })
+        }
       )
     } else if (entryType === "Gallery") {
       // Create gallery index  pages

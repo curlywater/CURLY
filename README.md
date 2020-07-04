@@ -14,9 +14,9 @@ Syntax theme based on Nord Theme Originally by Arctic Ice Studio, Ported for Pri
   - [ ] Column Filter
   - [x] Subcategory
 - Post Page
-  - [ ] TOC
+  - [x] TOC
   - [ ] Back to post list
-  - [ ] Related suggestion
+  - [x] Related suggestion
 - Gallery Page
   - [ ] Layout
 - About Page

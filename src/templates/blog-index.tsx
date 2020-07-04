@@ -17,6 +17,7 @@ type DataProps = {
             slug: string
             title: string
             date: string
+            category: string
             subcategory: string | null
           }
           headings: [{ value: string }]
@@ -30,6 +31,7 @@ type DataProps = {
 type PageContextType = {
   name: string
   category: string
+  subcategory: string
 }
 
 const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
@@ -72,7 +74,9 @@ const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
                 {node.fields.date}&nbsp;&nbsp;•&nbsp;&nbsp;{node.timeToRead} min
                 read
               </small>
-              {renderSubCategory(node.fields.subcategory)}
+              {pageContext.subcategory == "*"
+                ? renderSubCategory(node.fields.subcategory)
+                : null}
             </section>
           </article>
         )
@@ -90,7 +94,7 @@ function renderSubCategory(subcategory) {
     return (
       <small>
         &nbsp;&nbsp;•&nbsp;&nbsp;
-        <StyledLink to={`./${subcategory}`}>
+        <StyledLink to={`/${subcategory}`}>
           {subcategory[0].toUpperCase() + subcategory.slice(1)}
         </StyledLink>
       </small>
@@ -120,6 +124,8 @@ export const pageQuery = graphql`
             date(formatString: "MMMM DD, YYYY")
             slug
             title
+            category
+            column
             subcategory
           }
           headings(depth: h1) {

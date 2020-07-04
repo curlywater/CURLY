@@ -1,6 +1,5 @@
 body {
   letter-spacing: 0.02rem;
-  user-select: none;
   background-color: var(--bg);
 }
 
