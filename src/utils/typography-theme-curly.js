@@ -36,7 +36,11 @@ export default {
         color: "var(--theme)",
         textDecoration: "underline",
       },
-      "a:hover,a:active": {
+      "h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, a.custom-link": {
+        color: "inherit",
+        textDecoration: "none",
+      },
+      "a:not(.gatsby-resp-image-link):hover,a:not(.gatsby-resp-image-link):active": {
         opacity: 0.85,
       },
       "a.gatsby-resp-image-link": {

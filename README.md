@@ -1,4 +1,4 @@
-# CURLY
+# [CURLY](https://curlywater.netlify.app/)
 
 My personal site.
 
@@ -10,14 +10,18 @@ Syntax theme based on Nord Theme Originally by Arctic Ice Studio, Ported for Pri
 
 ## TODO
 
+- Blog Page
+  - [ ] Column Filter
+  - [x] Subcategory
 - Post Page
   - [ ] TOC
   - [ ] Back to post list
   - [ ] Related suggestion
-- Blog Page
-  - [ ] Column Filter
-  - [ ] Subcategory
 - Gallery Page
   - [ ] Layout
 - About Page
-  - [ ] Layout
+  - [ ] MDX - Success diary
+- Others
+  - [ ] Adaptive
+  - [ ] Dark Theme
+  - [ ] remark-plugin: single-title, [MD025](https://github.com/DavidAnson/markdownlint/blob/v0.20.3/doc/Rules.md#md025---multiple-top-level-headings-in-the-same-document)

@@ -57,9 +57,13 @@ const StyledLink = styled(Link)`
   letter-spacing: 4px;
   margin-left: 2.5em;
   margin-right: 2.5em;
-  &:hover {
+  &:hover,
+  &.active {
     color: var(--title-primary);
     transition: 0.3s color ease-in-out;
+  }
+  &.active:hover {
+    opacity: 1;
   }
 `
 
@@ -77,7 +81,11 @@ const Home: React.FC<PageProps<DataProps, PageContextProps>> = ({
           {pageContext.entries.map(
             ({ id, name, relativePath }: directoryNodeProps) => (
               <li key={id}>
-                <StyledLink tabIndex={-1} to={relativePath}>
+                <StyledLink
+                  tabIndex={-1}
+                  to={relativePath}
+                  activeClassName="active"
+                >
                   {name}
                 </StyledLink>
               </li>

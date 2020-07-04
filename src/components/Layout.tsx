@@ -6,6 +6,7 @@ import { options, rhythm, adjustFontSizeTo } from "../utils/typography"
 
 type ComponentProps = {
   title?: string
+  mainStyle?: object
   children: any
   locationPath: string
 }
@@ -27,8 +28,6 @@ const StyledHeaderLogo = styled.h1`
   ${adjustFontSizeTo("42px")};
   margin-top: ${rhythm(1)};
   & > a {
-    text-decoration: none;
-    color: var(--title-primary);
     &: hover {
       opacity: 1;
     }
@@ -43,7 +42,11 @@ const StyledFooter = styled.footer`
   text-align: center;
 `
 
-const Layout: React.FC<ComponentProps> = ({ locationPath, children }) => {
+const Layout: React.FC<ComponentProps> = ({
+  locationPath,
+  mainStyle,
+  children,
+}) => {
   const data = useStaticQuery(graphql`
     query {
       site {
@@ -72,7 +75,7 @@ const Layout: React.FC<ComponentProps> = ({ locationPath, children }) => {
   return (
     <StyledLayout>
       <header>{header}</header>
-      <main>{children}</main>
+      <main style={mainStyle}>{children}</main>
       <StyledFooter>{data.site.siteMetadata.description}</StyledFooter>
     </StyledLayout>
   )

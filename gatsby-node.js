@@ -2,15 +2,7 @@ const path = require(`path`)
 const { createFilePath } = require(`gatsby-source-filesystem`)
 
 exports.createPages = async ({ graphql, actions }) => {
-  const { createPage, createRedirect } = actions
-
-  createRedirect({
-    fromPath: "/404/",
-    toPath: "/",
-    isPermanent: true,
-    redirectInBrowser: true,
-  })
-
+  const { createPage } = actions
   const result = await graphql(
     `
       {
@@ -44,22 +36,34 @@ exports.createPages = async ({ graphql, actions }) => {
     fsEntries.map(node => [node.name.toLowerCase(), node])
   )
 
-  const entries = configEntries.reduce((collection, entry) => {
-    const directoryName = entry.directory.toLowerCase()
-    const fsEntry = fsEntriesMap.get(directoryName)
-    if (fsEntry) {
-      return collection.concat([
-        {
-          id: fsEntry.id,
-          name: entry.title || fsEntry.name,
-          type: entry.type || "Articles",
-          relativePath: directoryName,
-        },
-      ])
-    } else {
-      return collection
-    }
-  }, [])
+  const homeEntry = {
+    id: "home",
+    name: "Home",
+    type: "Home",
+    relativePath: "/",
+    active: true,
+  }
+  const entries = configEntries.reduce(
+    (entries, entry) => {
+      const category = entry.directory.toLowerCase()
+      const fsEntry = fsEntriesMap.get(category)
+      if (fsEntry) {
+        return entries.concat([
+          {
+            id: fsEntry.id,
+            name: entry.title || fsEntry.name,
+            type: entry.type || "Articles",
+            relativePath: `/${category}`,
+            category,
+          },
+        ])
+      } else {
+        return entries
+      }
+    },
+    [{ ...homeEntry }]
+  )
+
   // Create index page.
   createPage({
     path: "/",
@@ -68,24 +72,33 @@ exports.createPages = async ({ graphql, actions }) => {
       entries,
     },
   })
-  // Create blog list / gallery index  pages.
+  // Create 404 page.
+  createPage({
+    path: "/404",
+    component: path.resolve("./src/templates/index.tsx"),
+    context: {
+      entries: [{ ...homeEntry }],
+    },
+  })
+
   entries.forEach(async entry => {
-    const { type: entryType, relativePath, name } = entry
-    const categoryRegex = `/^\/${relativePath}/`
+    const { type: entryType, category, relativePath, name } = entry
     if (entryType === "Articles") {
+      // Create blog list.
       createPage({
-        path: `/${relativePath}`,
+        path: relativePath,
         component: path.resolve("./src/templates/blog-index.tsx"),
         context: {
           name,
-          categoryRegex,
+          category,
+          subcategory: "*",
         },
       })
 
       const result = await graphql(`
         {
           allMarkdownRemark(
-            filter: { fields: { slug: { regex: "${categoryRegex}" } } }
+            filter: { fields: { category: {eq: "${category}"} }}
           ) {
             edges {
               node {
@@ -94,6 +107,7 @@ exports.createPages = async ({ graphql, actions }) => {
                 }
               }
             }
+            distinct(field: fields___subcategory)
           }
         }
       `)
@@ -102,11 +116,23 @@ exports.createPages = async ({ graphql, actions }) => {
         throw result.errors
       }
 
+      // Create subcategory blog list
+      const subcategories = result.data.allMarkdownRemark.distinct
+      subcategories.forEach(subcategory =>
+        createPage({
+          path: `${relativePath}/${subcategory}`,
+          component: path.resolve("./src/templates/blog-index.tsx"),
+          context: {
+            name,
+            category,
+            subcategory,
+          },
+        })
+      )
+
       // Create blog posts pages.
       const posts = result.data.allMarkdownRemark.edges
-      posts.forEach(post => {
-        const slug = post.node.fields.slug
-
+      posts.forEach(({ node: { fields: { slug } } }) =>
         createPage({
           path: slug,
           component: path.resolve("./src/templates/post.tsx"),
@@ -114,8 +140,9 @@ exports.createPages = async ({ graphql, actions }) => {
             slug,
           },
         })
-      })
+      )
     } else if (entryType === "Gallery") {
+      // Create gallery index  pages
     }
   })
 }
@@ -124,6 +151,8 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
   if (node.internal.type === `MarkdownRemark`) {
     const fileNode = getNode(node.parent)
+    const directory = fileNode.relativeDirectory.toLowerCase().split(path.sep)
+
     const slug = createFilePath({ node, getNode }).toLowerCase()
     createNodeField({
       name: `slug`,
@@ -139,6 +168,21 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
       name: `title`,
       node,
       value: fileNode.name,
+    })
+    createNodeField({
+      name: `category`,
+      node,
+      value: directory[0],
+    })
+    createNodeField({
+      name: `column`,
+      node,
+      value: directory[1],
+    })
+    createNodeField({
+      name: `subcategory`,
+      node,
+      value: directory[2],
     })
   }
 }

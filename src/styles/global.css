@@ -10,6 +10,7 @@ body.light {
   --title-primary: #243127;
   --title-secondary: #d7e2dc;
   --text-primary: #34495e;
+  --text-secondary: hsla(210, 29%, 29%, 0.6);
   --line: hsla(0, 0%, 0%, 0.05);
   --dropdown-hover: #f5f9f6;
   --inlineCode-bg: #fbf4d8;

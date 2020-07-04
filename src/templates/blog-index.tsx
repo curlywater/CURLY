@@ -1,5 +1,6 @@
 import React from "react"
 import { PageProps, Link, graphql } from "gatsby"
+import styled from "styled-components"
 
 import Layout from "../components/Layout"
 import SEO from "../components/SEO"
@@ -16,6 +17,7 @@ type DataProps = {
             slug: string
             title: string
             date: string
+            subcategory: string | null
           }
           headings: [{ value: string }]
           excerpt: string
@@ -27,7 +29,7 @@ type DataProps = {
 
 type PageContextType = {
   name: string
-  categoryRegex: string
+  category: string
 }
 
 const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
@@ -65,10 +67,12 @@ const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
                 }}
               />
             </section>
-            <section>
+            <section style={{ color: "var(--text-secondary)" }}>
               <small>
-                {node.fields.date} • {node.timeToRead} min read
+                {node.fields.date}&nbsp;&nbsp;•&nbsp;&nbsp;{node.timeToRead} min
+                read
               </small>
+              {renderSubCategory(node.fields.subcategory)}
             </section>
           </article>
         )
@@ -77,13 +81,37 @@ const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
   )
 }
 
+const StyledLink = styled(Link)`
+  color: var(--text-secondary);
+`
+
+function renderSubCategory(subcategory) {
+  if (subcategory) {
+    return (
+      <small>
+        &nbsp;&nbsp;•&nbsp;&nbsp;
+        <StyledLink to={`./${subcategory}`}>
+          {subcategory[0].toUpperCase() + subcategory.slice(1)}
+        </StyledLink>
+      </small>
+    )
+  } else {
+    return null
+  }
+}
+
 export default BlogIndex
 
 export const pageQuery = graphql`
-  query($categoryRegex: String) {
+  query($category: String!, $subcategory: String!) {
     allMarkdownRemark(
       sort: { fields: fields___date, order: DESC }
-      filter: { fields: { slug: { regex: $categoryRegex } } }
+      filter: {
+        fields: {
+          category: { eq: $category }
+          subcategory: { glob: $subcategory }
+        }
+      }
     ) {
       edges {
         node {
@@ -92,6 +120,7 @@ export const pageQuery = graphql`
             date(formatString: "MMMM DD, YYYY")
             slug
             title
+            subcategory
           }
           headings(depth: h1) {
             value

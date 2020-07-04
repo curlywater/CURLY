@@ -54,6 +54,10 @@ module.exports = {
           `gatsby-remark-smartypants`,
           `gatsby-remark-katex`,
           {
+            resolve: "gatsby-remark-autolink-headers",
+            icon: false,
+          },
+          {
             resolve: "gatsby-remark-external-links",
             options: {
               target: "_blank",
