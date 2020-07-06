@@ -69,10 +69,9 @@ const StyledLink = styled(Link)`
 
 const Home: React.FC<PageProps<DataProps, PageContextProps>> = ({
   data,
-  location,
   pageContext,
 }) => (
-  <Layout locationPath={location.pathname}>
+  <Layout>
     <SEO lang="en" />
     <>
       <StyledTitle>{data.site.siteMetadata.title}</StyledTitle>

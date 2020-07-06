@@ -13,7 +13,7 @@ type ComponentProps = {
   title?: string
   description?: string
   lang?: string
-  meta?: [object]
+  meta?: []
 }
 
 const SEO: React.FC<ComponentProps> = ({ description, lang, meta, title }) => {

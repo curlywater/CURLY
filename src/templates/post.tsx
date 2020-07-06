@@ -38,7 +38,8 @@ const StyledTOC = styled.aside`
   right: 0;
   top: 0;
   transform: translateX(100%);
-  padding: ${rhythm(1)} 0;
+  padding: ${rhythm(2)} 0;
+  padding-left: ${rhythm(1)};
   section {
     position: relative;
     overflow-x: hidden;
@@ -94,10 +95,7 @@ const BlogPostTemplate: React.FC<PageProps<DataProps, PageContextProps>> = ({
   const post = data.markdownRemark
 
   return (
-    <Layout
-      locationPath={location.pathname}
-      mainStyle={{ position: "relative" }}
-    >
+    <Layout mainStyle={{ position: "relative" }}>
       <SEO title={pageContext.title} description={post.excerpt} />
       <article>
         <StyledArticleHeader>

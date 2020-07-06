@@ -25,3 +25,4 @@ Syntax theme based on Nord Theme Originally by Arctic Ice Studio, Ported for Pri
   - [ ] Adaptive
   - [ ] Dark Theme
   - [ ] remark-plugin: single-title, [MD025](https://github.com/DavidAnson/markdownlint/blob/v0.20.3/doc/Rules.md#md025---multiple-top-level-headings-in-the-same-document)
+  - [ ] TOC plugin

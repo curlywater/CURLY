@@ -8,13 +8,13 @@ type ComponentProps = {
   title?: string
   mainStyle?: object
   children: any
-  locationPath: string
+  renderHeader?: (ReactElement) => ReactElement | null
 }
 
 const StyledLayout = styled.div`
   margin-left: auto;
   margin-right: auto;
-  max-width: ${rhythm(30)};
+  max-width: ${rhythm(26)};
   width: 80%;
   min-height: 100vh;
   display: flex;
@@ -43,7 +43,7 @@ const StyledFooter = styled.footer`
 `
 
 const Layout: React.FC<ComponentProps> = ({
-  locationPath,
+  renderHeader = () => null,
   mainStyle,
   children,
 }) => {
@@ -59,22 +59,17 @@ const Layout: React.FC<ComponentProps> = ({
     }
   `)
 
-  const dirName = locationPath.match(
-    new RegExp(`${data.site.pathPrefix}(?:$|/([^/]+))`)
-  )?.[1]
-  let header: ReactElement = null
+  const headerLogo: ReactElement = (
+    <StyledHeaderLogo>
+      <Link to={`/`}>{data.site.siteMetadata.title}</Link>
+    </StyledHeaderLogo>
+  )
 
-  if (dirName === "blog") {
-    header = (
-      <StyledHeaderLogo>
-        <Link to={`/`}>{data.site.siteMetadata.title}</Link>
-      </StyledHeaderLogo>
-    )
-  }
+  const headerComponent = renderHeader(headerLogo)
 
   return (
     <StyledLayout>
-      <header>{header}</header>
+      <header>{headerComponent}</header>
       <main style={mainStyle}>{children}</main>
       <StyledFooter>{data.site.siteMetadata.description}</StyledFooter>
     </StyledLayout>
