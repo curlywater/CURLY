@@ -230,3 +230,21 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     })
   }
 }
+
+exports.onCreateWebpackConfig = ({ plugins, actions }) => {
+  actions.setWebpackConfig({
+    plugins: [
+      plugins.normalModuleReplacement(
+        /node_modules\/antd\/lib\/style\/core\/global\.less/,
+        resource => {
+          console.log(resource)
+          return path.resolve(
+            path.resolve(__dirname, "src"),
+            "styles",
+            "antd-global.less"
+          )
+        }
+      ),
+    ],
+  })
+}
