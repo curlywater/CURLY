@@ -7,8 +7,9 @@ import { options, rhythm, adjustFontSizeTo } from "../utils/typography"
 type ComponentProps = {
   title?: string
   mainStyle?: object
+  headerComponent?: ReactElement | null
   children: any
-  renderHeader?: (ReactElement) => ReactElement | null
+  locationPath: string
 }
 
 const StyledLayout = styled.div`
@@ -23,6 +24,13 @@ const StyledLayout = styled.div`
     flex: 1;
   }
 `
+
+const StyledLayoutHeader = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
 const StyledHeaderLogo = styled.h1`
   letter-spacing: 0.1em;
   ${adjustFontSizeTo("42px")};
@@ -43,7 +51,8 @@ const StyledFooter = styled.footer`
 `
 
 const Layout: React.FC<ComponentProps> = ({
-  renderHeader = () => null,
+  headerComponent,
+  locationPath,
   mainStyle,
   children,
 }) => {
@@ -59,17 +68,19 @@ const Layout: React.FC<ComponentProps> = ({
     }
   `)
 
+  const isHomePage = `${data.site.pathPrefix}/` === locationPath
   const headerLogo: ReactElement = (
     <StyledHeaderLogo>
       <Link to={`/`}>{data.site.siteMetadata.title}</Link>
     </StyledHeaderLogo>
   )
 
-  const headerComponent = renderHeader(headerLogo)
-
   return (
     <StyledLayout>
-      <header>{headerComponent}</header>
+      <StyledLayoutHeader>
+        {isHomePage ? null : headerLogo}
+        {headerComponent}
+      </StyledLayoutHeader>
       <main style={mainStyle}>{children}</main>
       <StyledFooter>{data.site.siteMetadata.description}</StyledFooter>
     </StyledLayout>

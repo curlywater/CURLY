@@ -145,9 +145,12 @@ function renderRelatedCategory({ category, subcategory }) {
   if (subcategory) {
     return (
       <li>
-        <Link to={`/${category}/${subcategory}`}>
+        <Link
+          to={`/${category}/${subcategory}`}
+          style={{ textTransform: "capitalize" }}
+        >
           → 更多
-          {subcategory[0].toUpperCase() + subcategory.slice(1)}
+          {subcategory}
           相关文章
         </Link>
       </li>

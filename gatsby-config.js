@@ -24,15 +24,7 @@ module.exports = {
     ],
   },
   plugins: [
-    {
-      resolve: `gatsby-plugin-less`,
-      options: {
-        modifyVars: require(`./src/utils/antd-theme.js`),
-        lessOptions: {
-          javascriptEnabled: true,
-        },
-      },
-    },
+    `gatsby-plugin-material-ui`,
     "gatsby-plugin-styled-components",
     {
       resolve: `gatsby-source-filesystem`,

@@ -126,16 +126,19 @@ exports.createPages = async ({ graphql, actions }) => {
 
       // Create subcategory blog list
       const subcategories = result.data.allMarkdownRemark.distinct
-      subcategories.forEach(subcategory =>
-        createPage({
-          path: `${relativePath}/${subcategory}`,
-          component: path.resolve("./src/templates/blog-index.tsx"),
-          context: {
-            name,
-            category,
-            subcategory,
-          },
-        })
+      await Promise.all(
+        subcategories.map(
+          async subcategory =>
+            await createPage({
+              path: `${relativePath}/${subcategory}`,
+              component: path.resolve("./src/templates/blog-index.tsx"),
+              context: {
+                name,
+                category,
+                subcategory,
+              },
+            })
+        )
       )
 
       // Create blog posts pages.
@@ -229,22 +232,4 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
       value: directory[2],
     })
   }
-}
-
-exports.onCreateWebpackConfig = ({ plugins, actions }) => {
-  actions.setWebpackConfig({
-    plugins: [
-      plugins.normalModuleReplacement(
-        /node_modules\/antd\/lib\/style\/core\/global\.less/,
-        resource => {
-          console.log(resource)
-          return path.resolve(
-            path.resolve(__dirname, "src"),
-            "styles",
-            "antd-global.less"
-          )
-        }
-      ),
-    ],
-  })
 }
