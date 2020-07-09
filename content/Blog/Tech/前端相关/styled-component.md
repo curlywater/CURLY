@@ -1,4 +1,12 @@
+---
+description: styled-component的七七八八，它是什么？怎么用？有何优缺点？
+---
+
+
+
 # styled-component
+
+## 简单介绍
 
 使用模版字符串和CSS组合的语法，生成一个被包裹组件（StyledComponent）。直接绑定组件和样式，免去两者间接对应的关系。
 

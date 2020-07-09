@@ -9,7 +9,7 @@ type ComponentProps = {
   mainStyle?: object
   headerComponent?: ReactElement | null
   children: any
-  locationPath: string
+  locationPath?: string
 }
 
 const StyledLayout = styled.div`

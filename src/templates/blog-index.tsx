@@ -24,8 +24,10 @@ type DataProps = {
             column: string
             subcategory: string | null
           }
+          frontmatter: {
+            description: string | null
+          }
           headings: [{ value: string }]
-          excerpt: string
         }
       }
     ]
@@ -74,7 +76,7 @@ const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
         className={classes.select}
         MenuProps={{ className: classes.menuItem }}
       >
-        <MenuItem value="">All Posts</MenuItem>
+        <MenuItem value="">所有文章</MenuItem>
         {columns.map(column => (
           <MenuItem key={column} value={column}>
             {column}
@@ -107,7 +109,7 @@ const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
             <section>
               <p
                 dangerouslySetInnerHTML={{
-                  __html: node.excerpt,
+                  __html: node.frontmatter.description,
                 }}
                 style={{
                   userSelect: "text",
@@ -120,9 +122,7 @@ const BlogIndex: React.FC<PageProps<DataProps, PageContextType>> = ({
                 {node.fields.date}&nbsp;&nbsp;•&nbsp;&nbsp;{node.timeToRead} min
                 read
               </small>
-              {pageContext.subcategory == "*"
-                ? renderSubCategory(node.fields.subcategory)
-                : null}
+              {renderSubCategory(node.fields.subcategory)}
             </section>
           </article>
         )
@@ -166,7 +166,7 @@ export const pageQuery = graphql`
         node {
           id
           fields {
-            date(formatString: "MMMM DD, YYYY")
+            date(formatString: "YYYY-MM-DD")
             slug
             title
             category
@@ -176,7 +176,9 @@ export const pageQuery = graphql`
           headings(depth: h1) {
             value
           }
-          excerpt(pruneLength: 100)
+          frontmatter {
+            description
+          }
           timeToRead
         }
       }

@@ -16,7 +16,9 @@ type DataProps = {
       category: string
       subcategory: string | null
     }
-    excerpt: string
+    frontmatter: {
+      description: string
+    }
     timeToRead: number
     tableOfContents: string
   }
@@ -86,40 +88,40 @@ const StyledRelatedPosts = styled.ul`
   list-style: none;
   margin-left: 0;
 `
+const StyledArticleDescription = styled.p`
+  ${scale(-1 / 5)};
+  display: block;
+  color: var(--text-secondary);
+`
 
 const BlogPostTemplate: React.FC<PageProps<DataProps, PageContextProps>> = ({
   data,
-  location,
   pageContext,
 }) => {
   const post = data.markdownRemark
 
   return (
     <Layout mainStyle={{ position: "relative" }}>
-      <SEO title={pageContext.title} description={post.excerpt} />
+      <SEO title={pageContext.title} />
       <article>
         <StyledArticleHeader>
           <h1>{pageContext.title}</h1>
-          <p
-            style={{
-              ...scale(-1 / 5),
-              display: `block`,
-              marginBottom: rhythm(1),
-              color: "var(--text-secondary)",
-            }}
-          >
+          <StyledArticleDescription>
+            {post.frontmatter.description}
+          </StyledArticleDescription>
+          <StyledArticleDescription>
             {post.fields.date} • {post.timeToRead} min read
-          </p>
+          </StyledArticleDescription>
           <hr />
         </StyledArticleHeader>
         <section
           dangerouslySetInnerHTML={{
             __html: post.html.replace(/(.*<\/h1>)/, ""),
           }}
-        />
+        ></section>
         <StyledArticleFooter>
           <hr />
-          <h3>Related Post</h3>
+          <h3>相关文章</h3>
           <StyledRelatedPosts>
             {pageContext.relatedPosts?.map(({ id, title, slug }) => (
               <li key={id}>
@@ -168,12 +170,14 @@ export const pageQuery = graphql`
       id
       html
       fields {
-        date(formatString: "MMMM DD, YYYY")
+        date(formatString: "YYYY-MM-DD")
         slug
         category
         subcategory
       }
-      excerpt(pruneLength: 100)
+      frontmatter {
+        description
+      }
       timeToRead
       tableOfContents
     }

@@ -11,11 +11,10 @@ Syntax theme based on Nord Theme Originally by Arctic Ice Studio, Ported for Pri
 ## TODO
 
 - Blog Page
-  - [ ] Column Filter
+  - [x] Column Filter
   - [x] Subcategory
 - Post Page
   - [x] TOC
-  - [ ] Back to post list
   - [x] Related suggestion
 - Gallery Page
   - [ ] Layout
