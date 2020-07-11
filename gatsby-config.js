@@ -1,5 +1,4 @@
 module.exports = {
-  pathPrefix: "/",
   siteMetadata: {
     title: `CURLY`,
     author: {
@@ -16,10 +15,6 @@ module.exports = {
       {
         directory: "Blog",
         type: "Articles",
-      },
-      {
-        directory: "Work",
-        type: "Gallery",
       },
     ],
   },
