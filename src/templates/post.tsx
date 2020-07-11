@@ -10,6 +10,7 @@ type DataProps = {
   markdownRemark: {
     id: string
     html: string
+    htmlAst: object
     fields: {
       date: string
       slug: string
@@ -169,6 +170,7 @@ export const pageQuery = graphql`
     markdownRemark(fields: { slug: { eq: $slug } }) {
       id
       html
+      htmlAst
       fields {
         date(formatString: "YYYY-MM-DD")
         slug
